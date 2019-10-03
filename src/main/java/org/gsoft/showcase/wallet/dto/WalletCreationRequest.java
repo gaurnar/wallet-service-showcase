@@ -1,19 +1,25 @@
 package org.gsoft.showcase.wallet.dto;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public final class WalletCreationRequest {
-    private BigDecimal initialAmount;
+    private UUID id;
+    private BigDecimal initialBalance;
 
-    public WalletCreationRequest(BigDecimal initialAmount) {
-        this.initialAmount = initialAmount;
+    public UUID getId() {
+        return id;
     }
 
-    public BigDecimal getInitialAmount() {
-        return initialAmount;
+    public void setId(UUID id) {
+        this.id = id;
     }
 
-    public void setInitialAmount(BigDecimal initialAmount) {
-        this.initialAmount = initialAmount;
+    public BigDecimal getInitialBalance() {
+        return initialBalance;
+    }
+
+    public void setInitialBalance(BigDecimal initialBalance) {
+        this.initialBalance = initialBalance;
     }
 }

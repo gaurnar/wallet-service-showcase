@@ -4,9 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
+import org.gsoft.showcase.wallet.resource.HealthCheckResource;
+import org.gsoft.showcase.wallet.resource.WalletManagementResource;
+import org.gsoft.showcase.wallet.service.WalletManager;
+import org.gsoft.showcase.wallet.service.WalletStorage;
 import org.gsoft.showcase.wallet.util.routing.RestApiRouter;
 import org.gsoft.showcase.wallet.util.routing.RestApiRoutingBuilder;
 import org.gsoft.showcase.wallet.util.routing.RestApiRoutingProvider;
@@ -43,7 +47,13 @@ public class Application {
     }
 
     private List<RestApiRoutingProvider> initializeServicesAndBuildRoutingProviders(ObjectMapper objectMapper) {
-        return Collections.singletonList(new HealthCheckRestService());
+        WalletStorage storage = new WalletStorage();
+        WalletManager walletManager = new WalletManager(storage);
+
+        return Arrays.asList(
+            new HealthCheckResource(),
+            new WalletManagementResource(walletManager)
+        );
     }
 
     private ObjectMapper buildObjectMapper() {

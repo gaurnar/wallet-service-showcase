@@ -8,6 +8,6 @@ public class ApplicationStartTest extends BaseApplicationTest {
 
     @Test
     public void health_check_returns_200() {
-        expect().statusCode(200).when().get("/api/health-check");
+        expect().statusCode(200).when().get("/api/v1/health-check");
     }
 }
