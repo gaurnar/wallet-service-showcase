@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
 group 'org.gsoft.showcase'
@@ -10,6 +11,21 @@ targetCompatibility = 11
 
 repositories {
     mavenCentral()
+}
+
+application {
+    mainClassName = 'org.gsoft.showcase.wallet.ApplicationRunner'
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'org.gsoft.showcase.wallet.ApplicationRunner'
+        )
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }
 
 dependencies {
