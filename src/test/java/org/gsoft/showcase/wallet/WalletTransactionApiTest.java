@@ -110,11 +110,18 @@ public class WalletTransactionApiTest extends BaseApplicationTest {
                       + "\"amount\": \"3\"}")
             .post("/api/v1/transaction")
             .then().statusCode(400);
+
+        BigDecimal aWalletBalance = getWalletBalance(aWalletId);
+        BigDecimal bWalletBalance = getWalletBalance(bWalletId);
+
+        assertEquals(BigDecimal.valueOf(5), aWalletBalance);
+        assertEquals(BigDecimal.valueOf(5), bWalletBalance);
     }
 
     @Test
     public void should_return_400_on_same_transaction_id_different_from() {
         UUID transactionId = UUID.randomUUID();
+
         UUID aWalletId = UUID.randomUUID();
         UUID bWalletId = UUID.randomUUID();
         UUID cWalletId = UUID.randomUUID();
@@ -138,11 +145,20 @@ public class WalletTransactionApiTest extends BaseApplicationTest {
                       + "\"amount\": \"5\"}")
             .post("/api/v1/transaction")
             .then().statusCode(400);
+
+        BigDecimal aWalletBalance = getWalletBalance(aWalletId);
+        BigDecimal bWalletBalance = getWalletBalance(bWalletId);
+        BigDecimal cWalletBalance = getWalletBalance(cWalletId);
+
+        assertEquals(BigDecimal.valueOf(5), aWalletBalance);
+        assertEquals(BigDecimal.valueOf(5), bWalletBalance);
+        assertEquals(BigDecimal.valueOf(10), cWalletBalance);
     }
 
     @Test
     public void should_return_400_on_same_transaction_id_different_to() {
         UUID transactionId = UUID.randomUUID();
+
         UUID aWalletId = UUID.randomUUID();
         UUID bWalletId = UUID.randomUUID();
         UUID cWalletId = UUID.randomUUID();
@@ -166,6 +182,14 @@ public class WalletTransactionApiTest extends BaseApplicationTest {
                       + "\"amount\": \"5\"}")
             .post("/api/v1/transaction")
             .then().statusCode(400);
+
+        BigDecimal aWalletBalance = getWalletBalance(aWalletId);
+        BigDecimal bWalletBalance = getWalletBalance(bWalletId);
+        BigDecimal cWalletBalance = getWalletBalance(cWalletId);
+
+        assertEquals(BigDecimal.valueOf(5), aWalletBalance);
+        assertEquals(BigDecimal.valueOf(5), bWalletBalance);
+        assertEquals(BigDecimal.valueOf(10), cWalletBalance);
     }
 
     @Test
