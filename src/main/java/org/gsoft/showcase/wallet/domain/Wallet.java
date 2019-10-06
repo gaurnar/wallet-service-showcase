@@ -10,10 +10,12 @@ import org.gsoft.showcase.wallet.error.WalletInsufficientFundsException;
 public class Wallet {
     private final UUID id;
     private volatile BigDecimal balance;
+    private final BigDecimal initialBalance;
 
     Wallet(UUID id, BigDecimal balance) {
         this.id = id;
         this.balance = balance;
+        initialBalance = balance;
     }
 
     public synchronized void withdraw(BigDecimal amount) {
@@ -33,5 +35,9 @@ public class Wallet {
 
     public BigDecimal getBalance() {
         return balance;
+    }
+
+    public BigDecimal getInitialBalance() {
+        return initialBalance;
     }
 }

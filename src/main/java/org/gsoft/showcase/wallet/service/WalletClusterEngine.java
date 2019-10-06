@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.gsoft.showcase.wallet.domain.Wallet;
 import org.gsoft.showcase.wallet.domain.WalletFactory;
 import org.gsoft.showcase.wallet.error.InvalidTransaction;
+import org.gsoft.showcase.wallet.error.InvalidWalletCreationException;
 import org.gsoft.showcase.wallet.error.WalletNotFoundException;
 
 /**
@@ -64,8 +65,20 @@ public class WalletClusterEngine implements WalletsFacade {
     }
 
     @Override
-    public void createWallet(UUID id, BigDecimal balance) {
-        storage.put(WalletFactory.createWallet(id, balance));
+    public void createWallet(UUID id, BigDecimal initialBalance) {
+        // TODO rework, not scalable
+        synchronized (storage) {
+            Wallet existingWallet = storage.get(id);
+            if (existingWallet != null) {
+                if (!existingWallet.getInitialBalance().equals(initialBalance)) {
+                    throw new InvalidWalletCreationException("initial balance differs from initial balance for known "
+                                                                 + "wallet");
+                }
+                return;
+            }
+
+            storage.put(WalletFactory.createWallet(id, initialBalance));
+        }
     }
 
     @Override

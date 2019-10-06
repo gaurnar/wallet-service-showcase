@@ -56,6 +56,38 @@ public class WalletManagementApiTest extends BaseApplicationTest {
     }
 
     @Test
+    public void wallet_creation_should_be_idempotent_same_initial_balance() {
+        UUID walletId = UUID.randomUUID();
+
+        String body = "{\"id\": \"" + walletId + "\", \"initialBalance\": \"10\"}";
+
+        given().body(body)
+            .post("/api/v1/wallet")
+            .then().statusCode(200);
+
+        given().body(body)
+            .post("/api/v1/wallet")
+            .then().statusCode(200);
+    }
+
+    @Test
+    public void should_return_400_on_creation_existing_id_different_initial_balance() {
+        UUID walletId = UUID.randomUUID();
+
+        given().body("{\"id\": \"" + walletId + "\", \"initialBalance\": \"10\"}")
+            .post("/api/v1/wallet")
+            .then().statusCode(200);
+
+        given().body("{\"id\": \"" + walletId + "\", \"initialBalance\": \"5\"}")
+            .post("/api/v1/wallet")
+            .then().statusCode(400);
+
+        get("/api/v1/wallet/" + walletId)
+            .then().statusCode(200)
+            .body("balance", equalTo("10"));
+    }
+
+    @Test
     public void should_return_404_when_asked_for_balance_unknown_wallet() {
         get("/api/v1/wallet/" + UUID.randomUUID())
             .then().statusCode(404);

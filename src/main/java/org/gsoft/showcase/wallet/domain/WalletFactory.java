@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public final class WalletFactory {
 
-    public static Wallet createWallet(UUID id, BigDecimal balance) {
-        return new Wallet(id, balance);
+    public static Wallet createWallet(UUID id, BigDecimal initialBalance) {
+        return new Wallet(id, initialBalance);
     }
 }
