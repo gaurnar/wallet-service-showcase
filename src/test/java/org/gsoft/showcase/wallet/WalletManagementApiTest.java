@@ -3,17 +3,15 @@ package org.gsoft.showcase.wallet;
 import static io.restassured.RestAssured.delete;
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
+import static org.gsoft.showcase.wallet.util.ApiTestUtil.getWalletBalance;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.text.IsEmptyString.emptyString;
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.math.BigDecimal;
 import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
 import org.junit.Test;
 
 /**
@@ -32,20 +30,20 @@ public class WalletManagementApiTest extends BaseApplicationTest {
 
         get("/api/v1/wallet/" + walletId)
             .then().statusCode(200)
-            .body("balance", equalTo(0));
+            .body("balance", equalTo("0"));
     }
 
     @Test
     public void should_create_wallet_with_given_balance() {
         UUID walletId = UUID.randomUUID();
 
-        given().body("{\"id\": \"" + walletId + "\", \"initialBalance\": 10}")
+        given().body("{\"id\": \"" + walletId + "\", \"initialBalance\": \"10\"}")
             .post("/api/v1/wallet")
             .then().statusCode(200);
 
         get("/api/v1/wallet/" + walletId)
             .then().statusCode(200)
-            .body("balance", equalTo(10));
+            .body("balance", equalTo("10"));
     }
 
     @Test
@@ -64,47 +62,6 @@ public class WalletManagementApiTest extends BaseApplicationTest {
     }
 
     @Test
-    public void should_create_wallet_concurrent_requests() throws Exception {
-        // TODO move to util classes for reuse
-
-        final int threadsCount = 10;
-
-        CountDownLatch startLatch = new CountDownLatch(1);
-        CountDownLatch finishLatch = new CountDownLatch(threadsCount);
-
-        List<UUID> uuids = Collections.synchronizedList(new ArrayList<>());
-
-        for (int i = 0; i < threadsCount; i++) {
-            new Thread(() -> {
-                UUID walletId = UUID.randomUUID();
-
-                try {
-                    startLatch.await();
-                } catch (InterruptedException ignored) {
-                }
-
-                try {
-                    given().body("{\"id\":\"" + walletId + "\"}")
-                        .post("/api/v1/wallet")
-                        .then().statusCode(200);
-
-                    get("/api/v1/wallet/" + walletId)
-                        .then().statusCode(200);
-
-                    uuids.add(walletId);
-                } finally {
-                    finishLatch.countDown();
-                }
-            }).start();
-        }
-
-        startLatch.countDown();
-        finishLatch.await();
-
-        assertEquals(threadsCount, uuids.size());
-    }
-
-    @Test
     public void should_remove_wallet() {
         UUID walletId = UUID.randomUUID();
 
@@ -117,5 +74,18 @@ public class WalletManagementApiTest extends BaseApplicationTest {
 
         get("/api/v1/wallet/" + walletId)
             .then().statusCode(404);
+    }
+
+    @Test
+    public void should_store_many_significant_digits_without_error() {
+        UUID walletId = UUID.randomUUID();
+
+        String numberString = "123674.23455732464576566532223534214";
+
+        given().body("{\"id\": \"" + walletId + "\", \"initialBalance\": \"" + numberString + "\"}")
+            .post("/api/v1/wallet")
+            .then().statusCode(200);
+
+        assertEquals(new BigDecimal(numberString), getWalletBalance(walletId));
     }
 }

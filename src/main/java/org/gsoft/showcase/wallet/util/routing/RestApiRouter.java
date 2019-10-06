@@ -74,6 +74,8 @@ public class RestApiRouter implements HttpHandler {
     }
 
     private void handleException(Exception exception, HttpExchange exchange) throws IOException {
+        exception.printStackTrace(); // TODO add logging
+
         int httpCode = 500;
         String message = "internal server error";
 

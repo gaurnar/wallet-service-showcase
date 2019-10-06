@@ -8,8 +8,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
 import org.gsoft.showcase.wallet.resource.HealthCheckResource;
+import org.gsoft.showcase.wallet.resource.TransactionResource;
 import org.gsoft.showcase.wallet.resource.WalletManagementResource;
+import org.gsoft.showcase.wallet.service.TransactionEngine;
+import org.gsoft.showcase.wallet.service.WalletClusterEngine;
+import org.gsoft.showcase.wallet.service.WalletInMemoryStorage;
 import org.gsoft.showcase.wallet.service.WalletManager;
+import org.gsoft.showcase.wallet.service.WalletSingleClusterEngineFacade;
 import org.gsoft.showcase.wallet.service.WalletStorage;
 import org.gsoft.showcase.wallet.util.routing.RestApiRouter;
 import org.gsoft.showcase.wallet.util.routing.RestApiRoutingBuilder;
@@ -25,13 +30,16 @@ public class Application {
 
         RestApiRoutingBuilder routingBuilder = new RestApiRoutingBuilder(objectMapper);
 
-        initializeServicesAndBuildRoutingProviders(objectMapper)
+        initializeServicesAndBuildRoutingProviders()
             .forEach(provider -> provider.provide(routingBuilder));
 
         RestApiRouter router = routingBuilder.build();
 
         httpServer.createContext("/", router);
-        httpServer.setExecutor(Executors.newFixedThreadPool(5)); // TODO another executor
+
+        // TODO another executor
+        // TODO make configurable
+        httpServer.setExecutor(Executors.newFixedThreadPool(10));
     }
 
     public void start() {
@@ -46,13 +54,17 @@ public class Application {
         return httpServer.getAddress();
     }
 
-    private List<RestApiRoutingProvider> initializeServicesAndBuildRoutingProviders(ObjectMapper objectMapper) {
-        WalletStorage storage = new WalletStorage();
-        WalletManager walletManager = new WalletManager(storage);
+    private List<RestApiRoutingProvider> initializeServicesAndBuildRoutingProviders() {
+        WalletStorage storage = new WalletInMemoryStorage();
+        WalletClusterEngine walletEngine = new WalletClusterEngine(storage);
+        WalletSingleClusterEngineFacade facade = new WalletSingleClusterEngineFacade(walletEngine);
+        WalletManager walletManager = new WalletManager(facade);
+        TransactionEngine engine = new TransactionEngine(facade);
 
         return Arrays.asList(
             new HealthCheckResource(),
-            new WalletManagementResource(walletManager)
+            new WalletManagementResource(walletManager),
+            new TransactionResource(engine)
         );
     }
 

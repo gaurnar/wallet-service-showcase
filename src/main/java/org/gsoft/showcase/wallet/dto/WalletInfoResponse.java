@@ -1,15 +1,18 @@
 package org.gsoft.showcase.wallet.dto;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
+/**
+ * Using strings for balance to avoid hassle with losing precision
+ * in clients (e.g. if double is used for representing JSON floating point numbers)
+ */
 public final class WalletInfoResponse {
 
     private UUID id;
 
-    private BigDecimal balance;
+    private String balance;
 
-    public WalletInfoResponse(UUID id, BigDecimal balance) {
+    public WalletInfoResponse(UUID id, String balance) {
         this.id = id;
         this.balance = balance;
     }
@@ -22,11 +25,11 @@ public final class WalletInfoResponse {
         this.id = id;
     }
 
-    public BigDecimal getBalance() {
+    public String getBalance() {
         return balance;
     }
 
-    public void setBalance(BigDecimal balance) {
+    public void setBalance(String balance) {
         this.balance = balance;
     }
 }

@@ -1,11 +1,14 @@
 package org.gsoft.showcase.wallet.dto;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
+/**
+ * Using strings for initialBalance to avoid hassle with losing precision
+ * in clients (e.g. if double is used for representing JSON floating point numbers)
+ */
 public final class WalletCreationRequest {
     private UUID id;
-    private BigDecimal initialBalance;
+    private String initialBalance;
 
     public UUID getId() {
         return id;
@@ -15,11 +18,11 @@ public final class WalletCreationRequest {
         this.id = id;
     }
 
-    public BigDecimal getInitialBalance() {
+    public String getInitialBalance() {
         return initialBalance;
     }
 
-    public void setInitialBalance(BigDecimal initialBalance) {
+    public void setInitialBalance(String initialBalance) {
         this.initialBalance = initialBalance;
     }
 }

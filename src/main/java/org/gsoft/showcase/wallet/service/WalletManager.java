@@ -3,34 +3,30 @@ package org.gsoft.showcase.wallet.service;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
-import org.gsoft.showcase.wallet.domain.Wallet;
-import org.gsoft.showcase.wallet.domain.WalletFactory;
 import org.gsoft.showcase.wallet.dto.WalletCreationRequest;
 import org.gsoft.showcase.wallet.dto.WalletInfoResponse;
-import org.gsoft.showcase.wallet.error.WalletNotFoundException;
 
 public class WalletManager {
 
-    private final WalletStorage storage;
+    private final WalletsFacade walletsFacade;
 
-    public WalletManager(WalletStorage storage) {
-        this.storage = storage;
+    public WalletManager(WalletsFacade walletsFacade) {
+        this.walletsFacade = walletsFacade;
     }
 
     public void createWallet(WalletCreationRequest creationRequest) {
         BigDecimal initialBalance = Optional.ofNullable(creationRequest.getInitialBalance())
+            .map(BigDecimal::new)
             .orElse(BigDecimal.ZERO);
-        Wallet wallet = WalletFactory.createWallet(creationRequest.getId(), initialBalance);
-        storage.put(wallet);
+        walletsFacade.createWallet(creationRequest.getId(), initialBalance);
     }
 
     public WalletInfoResponse getWalletInfo(UUID id) {
-        Wallet wallet = Optional.ofNullable(storage.get(id))
-            .orElseThrow(() -> new WalletNotFoundException(id));
-        return new WalletInfoResponse(id, wallet.getBalance());
+        BigDecimal balance = walletsFacade.getBalance(id);
+        return new WalletInfoResponse(id, balance.toPlainString());
     }
 
     public void removeWallet(UUID id) {
-        storage.delete(id);
+        walletsFacade.removeWallet(id);
     }
 }

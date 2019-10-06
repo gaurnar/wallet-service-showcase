@@ -1,22 +1,15 @@
 package org.gsoft.showcase.wallet.service;
 
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import org.gsoft.showcase.wallet.domain.Wallet;
 
-public class WalletStorage {
-    private final Map<UUID, Wallet> walletMap = new ConcurrentHashMap<>();
+/**
+ * TODO rework to be easily modifiable for actual persistence
+ */
+public interface WalletStorage {
+    Wallet get(UUID id);
 
-    public Wallet get(UUID id) {
-        return walletMap.get(id);
-    }
+    void put(Wallet wallet);
 
-    public void put(Wallet wallet) {
-        walletMap.put(wallet.getId(), wallet);
-    }
-
-    public void delete(UUID id) {
-        walletMap.remove(id);
-    }
+    void remove(UUID id);
 }
