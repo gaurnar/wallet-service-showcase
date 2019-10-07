@@ -24,7 +24,6 @@ public class BasicApiTest extends BaseApplicationTest {
     @Test
     public void should_return_404_on_unknown_url() {
         get("/api/v1/foo/bar")
-            .then()
-            .statusCode(404);
+            .then().statusCode(404);
     }
 }

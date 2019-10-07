@@ -1,6 +1,7 @@
 package org.gsoft.showcase.wallet;
 
 import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.post;
 import static org.gsoft.showcase.wallet.util.ApiTestUtil.createWalletWithBalance;
 import static org.gsoft.showcase.wallet.util.ApiTestUtil.getWalletBalance;
 import static org.junit.Assert.assertEquals;
@@ -53,6 +54,76 @@ public class WalletTransactionApiTest extends BaseApplicationTest {
 
         assertEquals(BigDecimal.valueOf(1), aWalletBalance);
         assertEquals(BigDecimal.valueOf(0), bWalletBalance);
+    }
+
+    @Test
+    public void should_return_400_on_non_uuid_transaction_id() {
+        UUID aWalletId = createWalletWithBalance(BigDecimal.valueOf(10));
+        UUID bWalletId = createWalletWithBalance(BigDecimal.valueOf(0));
+
+        given()
+            .body("{\"id\": \"foobar\", "
+                      + "\"from\": \"" + aWalletId + "\", "
+                      + "\"to\": \"" + bWalletId + "\", "
+                      + "\"amount\": \"5\"}")
+            .post("/api/v1/transaction")
+            .then().statusCode(400);
+    }
+
+    @Test
+    public void should_return_400_on_missing_id() {
+        UUID aWalletId = createWalletWithBalance(BigDecimal.valueOf(10));
+        UUID bWalletId = createWalletWithBalance(BigDecimal.valueOf(0));
+
+        given()
+            .body("{\"from\": \"" + aWalletId + "\", "
+                      + "\"to\": \"" + bWalletId + "\", "
+                      + "\"amount\": \"5\"}")
+            .post("/api/v1/transaction")
+            .then().statusCode(400);
+    }
+
+    @Test
+    public void should_return_400_on_missing_from() {
+        UUID bWalletId = createWalletWithBalance(BigDecimal.valueOf(0));
+
+        given()
+            .body("{\"id\": \"" + UUID.randomUUID() + "\", "
+                      + "\"to\": \"" + bWalletId + "\", "
+                      + "\"amount\": \"5\"}")
+            .post("/api/v1/transaction")
+            .then().statusCode(400);
+    }
+
+    @Test
+    public void should_return_400_on_missing_to() {
+        UUID bWalletId = createWalletWithBalance(BigDecimal.valueOf(0));
+
+        given()
+            .body("{\"id\": \"" + UUID.randomUUID() + "\", "
+                      + "\"to\": \"" + bWalletId + "\", "
+                      + "\"amount\": \"5\"}")
+            .post("/api/v1/transaction")
+            .then().statusCode(400);
+    }
+
+    @Test
+    public void should_return_400_on_missing_amount() {
+        UUID aWalletId = createWalletWithBalance(BigDecimal.valueOf(10));
+        UUID bWalletId = createWalletWithBalance(BigDecimal.valueOf(0));
+
+        given()
+            .body("{\"id\": \"" + UUID.randomUUID() + "\", "
+                      + "\"from\": \"" + aWalletId + "\", "
+                      + "\"to\": \"" + bWalletId + "\"}")
+            .post("/api/v1/transaction")
+            .then().statusCode(400);
+    }
+
+    @Test
+    public void should_return_400_with_no_request_content() {
+        post("/api/v1/transaction")
+            .then().statusCode(400);
     }
 
     @Test

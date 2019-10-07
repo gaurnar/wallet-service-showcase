@@ -3,8 +3,12 @@ package org.gsoft.showcase.wallet;
 import static io.restassured.RestAssured.delete;
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.post;
 import static org.gsoft.showcase.wallet.util.ApiTestUtil.createWalletWithBalance;
 import static org.gsoft.showcase.wallet.util.ApiTestUtil.getWalletBalance;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
@@ -24,6 +28,13 @@ public class WalletManagementApiTest extends BaseApplicationTest {
         BigDecimal walletBalance = getWalletBalance(UUID.fromString(uuidString));
 
         assertEquals(BigDecimal.ZERO, walletBalance);
+    }
+
+    @Test
+    public void should_create_wallet_with_no_request_content() {
+        post("/api/v1/wallet")
+            .then().statusCode(200)
+            .body("id", not(is(nullValue())));
     }
 
     @Test

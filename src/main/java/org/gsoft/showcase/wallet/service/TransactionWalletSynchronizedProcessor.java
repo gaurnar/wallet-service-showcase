@@ -24,6 +24,8 @@ public class TransactionWalletSynchronizedProcessor implements TransactionProces
 
     @Override
     public void process(TransactionRequest transactionRequest) {
+        validateRequest(transactionRequest);
+
         TransactionSpecification transaction =
             new TransactionSpecification(transactionRequest.getId(),
                                          transactionRequest.getFrom(),
@@ -78,6 +80,24 @@ public class TransactionWalletSynchronizedProcessor implements TransactionProces
             return new Wallet[] { fromWallet, toWallet };
         } else {
             return new Wallet[] { toWallet, fromWallet };
+        }
+    }
+
+    private void validateRequest(TransactionRequest request) {
+        if (request == null) {
+            throw new InvalidTransaction("transaction request is empty");
+        }
+        if (request.getId() == null) {
+            throw new InvalidTransaction("\"id\" is null");
+        }
+        if (request.getFrom() == null) {
+            throw new InvalidTransaction("\"from\" is null");
+        }
+        if (request.getTo() == null) {
+            throw new InvalidTransaction("\"to\" is null");
+        }
+        if (request.getAmount() == null) {
+            throw new InvalidTransaction("\"amount\" is null");
         }
     }
 }

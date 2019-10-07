@@ -16,7 +16,8 @@ public class WalletManager {
     }
 
     public WalletInfoResponse createWallet(WalletCreationRequest creationRequest) {
-        BigDecimal initialBalance = Optional.ofNullable(creationRequest.getInitialBalance())
+        BigDecimal initialBalance = Optional.ofNullable(creationRequest)
+            .map(WalletCreationRequest::getInitialBalance)
             .map(BigDecimal::new)
             .orElse(BigDecimal.ZERO);
         Wallet wallet = registry.create(initialBalance);

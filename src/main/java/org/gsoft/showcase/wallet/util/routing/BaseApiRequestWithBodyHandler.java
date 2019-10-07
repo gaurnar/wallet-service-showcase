@@ -35,6 +35,6 @@ abstract class BaseApiRequestWithBodyHandler<T, V> implements ApiRequestHandler<
 
     @Override
     public V handleWithoutBody(Matcher pathMatcher) {
-        throw new UnsupportedOperationException();
+        return handleWithBody(pathMatcher, null);
     }
 }
