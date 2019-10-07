@@ -13,6 +13,16 @@ public final class TransactionRequest {
     private UUID to;
     private String amount;
 
+    public TransactionRequest() {
+    }
+
+    public TransactionRequest(UUID id, UUID from, UUID to, String amount) {
+        this.id = id;
+        this.from = from;
+        this.to = to;
+        this.amount = amount;
+    }
+
     public UUID getId() {
         return id;
     }

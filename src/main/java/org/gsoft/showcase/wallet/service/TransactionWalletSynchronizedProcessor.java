@@ -58,7 +58,14 @@ public class TransactionWalletSynchronizedProcessor implements TransactionProces
                 BigDecimal toNewBalance = toOldBalance.add(transaction.getAmount()).stripTrailingZeros();
 
                 fromWallet.setBalance(fromNewBalance);
-                toWallet.setBalance(toNewBalance);
+
+                try {
+                    toWallet.setBalance(toNewBalance);
+                } catch (Exception e) {
+                    // reverting change to "from" wallet
+                    fromWallet.setBalance(fromOldBalance);
+                    throw e;
+                }
             }
         }
     }
