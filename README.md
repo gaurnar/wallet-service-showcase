@@ -31,7 +31,7 @@ POST /api/v1/wallet
 
 request body:
 
-```json
+```
 {
   "id": "f422322b-39a7-4b08-a610-5a9e584dad5f", // Wallet ID
   "initialBalance": "10" // balance as string
@@ -56,7 +56,7 @@ GET /api/v1/wallet/<wallet_id>
 
 Response body:
 
-```json
+```
 {
   "id": "f422322b-39a7-4b08-a610-5a9e584dad5f", // Wallet ID
   "balance": "145" // balance as string
@@ -71,7 +71,7 @@ POST /api/v1/transaction
 
 request body:
 
-```json
+```
 {
   "id": "d6c5d110-cbd0-4384-89dc-b4157708edfb", // transaction ID
   "from": "f422322b-39a7-4b08-a610-5a9e584dad5f", // "from" wallet ID
