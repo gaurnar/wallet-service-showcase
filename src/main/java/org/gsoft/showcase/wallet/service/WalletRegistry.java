@@ -7,7 +7,7 @@ import org.gsoft.showcase.wallet.domain.Wallet;
 public interface WalletRegistry {
     Wallet get(UUID id);
 
-    void create(UUID walletId, BigDecimal initialBalance);
+    Wallet create(BigDecimal initialBalance);
 
     void remove(UUID id);
 }

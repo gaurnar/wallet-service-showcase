@@ -31,11 +31,8 @@ public class WalletConcurrentApiTest extends BaseApplicationTest {
     private void processConcurrentTransactions() {
         final int numberOfThreads = 10;
 
-        UUID aWalletId = UUID.randomUUID();
-        UUID bWalletId = UUID.randomUUID();
-
-        createWalletWithBalance(aWalletId, BigDecimal.valueOf(100));
-        createWalletWithBalance(bWalletId, BigDecimal.valueOf(0));
+        UUID aWalletId = createWalletWithBalance(BigDecimal.valueOf(100));
+        UUID bWalletId = createWalletWithBalance(BigDecimal.valueOf(0));
 
         AtomicBoolean error = new AtomicBoolean(false);
 
@@ -82,11 +79,8 @@ public class WalletConcurrentApiTest extends BaseApplicationTest {
 
         UUID transactionId = UUID.randomUUID();
 
-        UUID aWalletId = UUID.randomUUID();
-        UUID bWalletId = UUID.randomUUID();
-
-        createWalletWithBalance(aWalletId, BigDecimal.valueOf(100));
-        createWalletWithBalance(bWalletId, BigDecimal.valueOf(0));
+        UUID aWalletId = createWalletWithBalance(BigDecimal.valueOf(100));
+        UUID bWalletId = createWalletWithBalance(BigDecimal.valueOf(0));
 
         AtomicBoolean error = new AtomicBoolean(false);
 
@@ -130,11 +124,8 @@ public class WalletConcurrentApiTest extends BaseApplicationTest {
         UUID aTransactionId = UUID.randomUUID();
         UUID bTransactionId = UUID.randomUUID();
 
-        UUID aWalletId = UUID.randomUUID();
-        UUID bWalletId = UUID.randomUUID();
-
-        createWalletWithBalance(aWalletId, BigDecimal.valueOf(5));
-        createWalletWithBalance(bWalletId, BigDecimal.valueOf(7));
+        UUID aWalletId = createWalletWithBalance(BigDecimal.valueOf(5));
+        UUID bWalletId = createWalletWithBalance(BigDecimal.valueOf(7));
 
         CountDownLatch startLatch = new CountDownLatch(1);
 
@@ -201,11 +192,7 @@ public class WalletConcurrentApiTest extends BaseApplicationTest {
 
         ParallelActionRunner parallelActionRunner =
             new ParallelActionRunner(threadsCount, () -> {
-                UUID walletId = UUID.randomUUID();
-
-                given().body("{\"id\":\"" + walletId + "\"}")
-                    .post("/api/v1/wallet")
-                    .then().statusCode(200);
+                UUID walletId = createWalletWithBalance(BigDecimal.ZERO);
 
                 get("/api/v1/wallet/" + walletId)
                     .then().statusCode(200);

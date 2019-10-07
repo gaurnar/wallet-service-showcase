@@ -33,12 +33,18 @@ request body:
 
 ```
 {
-  "id": "f422322b-39a7-4b08-a610-5a9e584dad5f", // Wallet ID
-  "initialBalance": "10" // balance as string
+  "initialBalance": "10" // balance as string, optional (default - "0")
 }
 ```
 
-No response on successful invocation.
+response body:
+
+```
+{
+  "id": "f422322b-39a7-4b08-a610-5a9e584dad5f", // created wallet ID
+  "balance": "10" // balance as string
+}
+```
 
 #### Wallet removal
 

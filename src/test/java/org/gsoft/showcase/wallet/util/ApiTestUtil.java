@@ -8,10 +8,13 @@ import java.util.UUID;
 
 public final class ApiTestUtil {
 
-    public static void createWalletWithBalance(UUID id, BigDecimal balance) {
-        given().body("{\"id\": \"" + id + "\", \"initialBalance\": \"" + balance + "\"}")
-            .post("/api/v1/wallet")
-            .then().statusCode(200);
+    public static UUID createWalletWithBalance(BigDecimal balance) {
+        String uuidString =
+            given().body("{\"initialBalance\": \"" + balance + "\"}")
+                .post("/api/v1/wallet")
+                .then().statusCode(200)
+                .extract().path("id");
+        return UUID.fromString(uuidString);
     }
 
     public static BigDecimal getWalletBalance(UUID id) {

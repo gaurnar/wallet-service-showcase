@@ -14,11 +14,9 @@ public class WalletTransactionApiTest extends BaseApplicationTest {
     @Test
     public void should_transfer_money_enough_funds() {
         UUID transactionId = UUID.randomUUID();
-        UUID aWalletId = UUID.randomUUID();
-        UUID bWalletId = UUID.randomUUID();
 
-        createWalletWithBalance(aWalletId, BigDecimal.valueOf(10));
-        createWalletWithBalance(bWalletId, BigDecimal.valueOf(0));
+        UUID aWalletId = createWalletWithBalance(BigDecimal.valueOf(10));
+        UUID bWalletId = createWalletWithBalance(BigDecimal.valueOf(0));
 
         given()
             .body("{\"id\": \"" + transactionId + "\", "
@@ -38,11 +36,9 @@ public class WalletTransactionApiTest extends BaseApplicationTest {
     @Test
     public void should_return_error_insufficient_funds() {
         UUID transactionId = UUID.randomUUID();
-        UUID aWalletId = UUID.randomUUID();
-        UUID bWalletId = UUID.randomUUID();
 
-        createWalletWithBalance(aWalletId, BigDecimal.valueOf(1));
-        createWalletWithBalance(bWalletId, BigDecimal.valueOf(0));
+        UUID aWalletId = createWalletWithBalance(BigDecimal.valueOf(1));
+        UUID bWalletId = createWalletWithBalance(BigDecimal.valueOf(0));
 
         given()
             .body("{\"id\": \"" + transactionId + "\", "
@@ -62,11 +58,9 @@ public class WalletTransactionApiTest extends BaseApplicationTest {
     @Test
     public void transaction_should_be_idempotent() {
         UUID transactionId = UUID.randomUUID();
-        UUID aWalletId = UUID.randomUUID();
-        UUID bWalletId = UUID.randomUUID();
 
-        createWalletWithBalance(aWalletId, BigDecimal.valueOf(10));
-        createWalletWithBalance(bWalletId, BigDecimal.valueOf(0));
+        UUID aWalletId = createWalletWithBalance(BigDecimal.valueOf(10));
+        UUID bWalletId = createWalletWithBalance(BigDecimal.valueOf(0));
 
         final String body = "{\"id\": \"" + transactionId + "\", "
             + "\"from\": \"" + aWalletId + "\", "
@@ -89,10 +83,9 @@ public class WalletTransactionApiTest extends BaseApplicationTest {
     @Test
     public void should_return_404_on_unknown_from() {
         UUID transactionId = UUID.randomUUID();
-        UUID aWalletId = UUID.randomUUID();
-        UUID bWalletId = UUID.randomUUID();
 
-        createWalletWithBalance(bWalletId, BigDecimal.valueOf(0));
+        UUID aWalletId = UUID.randomUUID();
+        UUID bWalletId = createWalletWithBalance(BigDecimal.valueOf(0));
 
         final String body = "{\"id\": \"" + transactionId + "\", "
             + "\"from\": \"" + aWalletId + "\", "
@@ -110,10 +103,9 @@ public class WalletTransactionApiTest extends BaseApplicationTest {
     @Test
     public void should_return_404_on_unknown_to() {
         UUID transactionId = UUID.randomUUID();
-        UUID aWalletId = UUID.randomUUID();
-        UUID bWalletId = UUID.randomUUID();
 
-        createWalletWithBalance(aWalletId, BigDecimal.valueOf(10));
+        UUID aWalletId = createWalletWithBalance(BigDecimal.valueOf(10));
+        UUID bWalletId = UUID.randomUUID();
 
         final String body = "{\"id\": \"" + transactionId + "\", "
             + "\"from\": \"" + aWalletId + "\", "
@@ -146,11 +138,9 @@ public class WalletTransactionApiTest extends BaseApplicationTest {
     @Test
     public void should_return_400_on_same_transaction_id_different_amount() {
         UUID transactionId = UUID.randomUUID();
-        UUID aWalletId = UUID.randomUUID();
-        UUID bWalletId = UUID.randomUUID();
 
-        createWalletWithBalance(aWalletId, BigDecimal.valueOf(10));
-        createWalletWithBalance(bWalletId, BigDecimal.valueOf(0));
+        UUID aWalletId = createWalletWithBalance(BigDecimal.valueOf(10));
+        UUID bWalletId = createWalletWithBalance(BigDecimal.valueOf(0));
 
         given()
             .body("{\"id\": \"" + transactionId + "\", "
@@ -179,13 +169,9 @@ public class WalletTransactionApiTest extends BaseApplicationTest {
     public void should_return_400_on_same_transaction_id_different_from() {
         UUID transactionId = UUID.randomUUID();
 
-        UUID aWalletId = UUID.randomUUID();
-        UUID bWalletId = UUID.randomUUID();
-        UUID cWalletId = UUID.randomUUID();
-
-        createWalletWithBalance(aWalletId, BigDecimal.valueOf(10));
-        createWalletWithBalance(bWalletId, BigDecimal.valueOf(0));
-        createWalletWithBalance(cWalletId, BigDecimal.valueOf(10));
+        UUID aWalletId = createWalletWithBalance(BigDecimal.valueOf(10));
+        UUID bWalletId = createWalletWithBalance(BigDecimal.valueOf(0));
+        UUID cWalletId = createWalletWithBalance(BigDecimal.valueOf(10));
 
         given()
             .body("{\"id\": \"" + transactionId + "\", "
@@ -216,13 +202,9 @@ public class WalletTransactionApiTest extends BaseApplicationTest {
     public void should_return_400_on_same_transaction_id_different_to() {
         UUID transactionId = UUID.randomUUID();
 
-        UUID aWalletId = UUID.randomUUID();
-        UUID bWalletId = UUID.randomUUID();
-        UUID cWalletId = UUID.randomUUID();
-
-        createWalletWithBalance(aWalletId, BigDecimal.valueOf(10));
-        createWalletWithBalance(bWalletId, BigDecimal.valueOf(0));
-        createWalletWithBalance(cWalletId, BigDecimal.valueOf(10));
+        UUID aWalletId = createWalletWithBalance(BigDecimal.valueOf(10));
+        UUID bWalletId = createWalletWithBalance(BigDecimal.valueOf(0));
+        UUID cWalletId = createWalletWithBalance(BigDecimal.valueOf(10));
 
         given()
             .body("{\"id\": \"" + transactionId + "\", "
@@ -253,15 +235,10 @@ public class WalletTransactionApiTest extends BaseApplicationTest {
     public void should_return_400_on_same_transaction_id_all_different() {
         UUID transactionId = UUID.randomUUID();
 
-        UUID aWalletId = UUID.randomUUID();
-        UUID bWalletId = UUID.randomUUID();
-        UUID cWalletId = UUID.randomUUID();
-        UUID dWalletId = UUID.randomUUID();
-
-        createWalletWithBalance(aWalletId, BigDecimal.valueOf(10));
-        createWalletWithBalance(bWalletId, BigDecimal.valueOf(0));
-        createWalletWithBalance(cWalletId, BigDecimal.valueOf(10));
-        createWalletWithBalance(dWalletId, BigDecimal.valueOf(0));
+        UUID aWalletId = createWalletWithBalance(BigDecimal.valueOf(10));
+        UUID bWalletId = createWalletWithBalance(BigDecimal.valueOf(0));
+        UUID cWalletId = createWalletWithBalance(BigDecimal.valueOf(10));
+        UUID dWalletId = createWalletWithBalance(BigDecimal.valueOf(0));
 
         given()
             .body("{\"id\": \"" + transactionId + "\", "
@@ -291,12 +268,9 @@ public class WalletTransactionApiTest extends BaseApplicationTest {
     }
 
     @Test
-    public void should_not_make_binary_mantissa_error() {
-        UUID aWalletId = UUID.randomUUID();
-        UUID bWalletId = UUID.randomUUID();
-
-        createWalletWithBalance(aWalletId, BigDecimal.valueOf(10));
-        createWalletWithBalance(bWalletId, BigDecimal.valueOf(0));
+    public void should_not_make_binary_mantissa_error_on_repeated_addition() {
+        UUID aWalletId = createWalletWithBalance(BigDecimal.valueOf(10));
+        UUID bWalletId = createWalletWithBalance(BigDecimal.valueOf(0));
 
         for (int i = 0; i < 100; i++) {
             given()

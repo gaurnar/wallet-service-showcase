@@ -22,10 +22,7 @@ public class WalletManagementResource implements RestApiRoutingProvider {
         apiRoutingBuilder
             .get(WALLET_PATH_PATTERN, pathMatcher -> manager.getWalletInfo(UUID.fromString(pathMatcher.group(1))))
             .post("/api/v1/wallet", WalletCreationRequest.class,
-                  (pathMatcher, body) -> {
-                      manager.createWallet(body);
-                      return null;
-                  })
+                  (pathMatcher, body) -> manager.createWallet(body))
             .delete(WALLET_PATH_PATTERN, pathMatcher -> {
                 manager.removeWallet(UUID.fromString(pathMatcher.group(1)));
                 return null;
