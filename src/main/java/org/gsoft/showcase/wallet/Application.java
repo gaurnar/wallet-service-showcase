@@ -10,12 +10,9 @@ import java.util.concurrent.Executors;
 import org.gsoft.showcase.wallet.resource.HealthCheckResource;
 import org.gsoft.showcase.wallet.resource.TransactionResource;
 import org.gsoft.showcase.wallet.resource.WalletManagementResource;
-import org.gsoft.showcase.wallet.service.TransactionEngine;
-import org.gsoft.showcase.wallet.service.WalletClusterEngine;
-import org.gsoft.showcase.wallet.service.WalletInMemoryStorage;
+import org.gsoft.showcase.wallet.service.TransactionWalletSynchronizedProcessor;
+import org.gsoft.showcase.wallet.service.WalletConcurrentHashMapRegistry;
 import org.gsoft.showcase.wallet.service.WalletManager;
-import org.gsoft.showcase.wallet.service.WalletSingleClusterEngineFacade;
-import org.gsoft.showcase.wallet.service.WalletStorage;
 import org.gsoft.showcase.wallet.util.routing.RestApiRouter;
 import org.gsoft.showcase.wallet.util.routing.RestApiRoutingBuilder;
 import org.gsoft.showcase.wallet.util.routing.RestApiRoutingProvider;
@@ -55,16 +52,14 @@ public class Application {
     }
 
     private List<RestApiRoutingProvider> initializeServicesAndBuildRoutingProviders() {
-        WalletStorage storage = new WalletInMemoryStorage();
-        WalletClusterEngine walletEngine = new WalletClusterEngine(storage);
-        WalletSingleClusterEngineFacade facade = new WalletSingleClusterEngineFacade(walletEngine);
-        WalletManager walletManager = new WalletManager(facade);
-        TransactionEngine engine = new TransactionEngine(facade);
+        WalletConcurrentHashMapRegistry registry = new WalletConcurrentHashMapRegistry();
+        WalletManager walletManager = new WalletManager(registry);
+        TransactionWalletSynchronizedProcessor transactionProcessor = new TransactionWalletSynchronizedProcessor(registry);
 
         return Arrays.asList(
             new HealthCheckResource(),
             new WalletManagementResource(walletManager),
-            new TransactionResource(engine)
+            new TransactionResource(transactionProcessor)
         );
     }
 

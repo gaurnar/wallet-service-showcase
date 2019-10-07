@@ -1,15 +1,13 @@
 package org.gsoft.showcase.wallet.service;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 import org.gsoft.showcase.wallet.domain.Wallet;
 
-/**
- * TODO rework to be easily modifiable for actual persistence
- */
-public interface WalletStorage {
+public interface WalletRegistry {
     Wallet get(UUID id);
 
-    void put(Wallet wallet);
+    void create(UUID walletId, BigDecimal initialBalance);
 
     void remove(UUID id);
 }

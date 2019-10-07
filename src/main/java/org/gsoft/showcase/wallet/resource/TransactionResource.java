@@ -1,15 +1,15 @@
 package org.gsoft.showcase.wallet.resource;
 
 import org.gsoft.showcase.wallet.dto.TransactionRequest;
-import org.gsoft.showcase.wallet.service.TransactionEngine;
+import org.gsoft.showcase.wallet.service.TransactionWalletSynchronizedProcessor;
 import org.gsoft.showcase.wallet.util.routing.RestApiRoutingBuilder;
 import org.gsoft.showcase.wallet.util.routing.RestApiRoutingProvider;
 
 public class TransactionResource implements RestApiRoutingProvider {
 
-    private final TransactionEngine engine;
+    private final TransactionWalletSynchronizedProcessor engine;
 
-    public TransactionResource(TransactionEngine engine) {
+    public TransactionResource(TransactionWalletSynchronizedProcessor engine) {
         this.engine = engine;
     }
 
