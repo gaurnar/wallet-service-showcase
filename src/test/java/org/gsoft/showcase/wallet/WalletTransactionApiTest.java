@@ -87,6 +87,63 @@ public class WalletTransactionApiTest extends BaseApplicationTest {
     }
 
     @Test
+    public void should_return_404_on_unknown_from() {
+        UUID transactionId = UUID.randomUUID();
+        UUID aWalletId = UUID.randomUUID();
+        UUID bWalletId = UUID.randomUUID();
+
+        createWalletWithBalance(bWalletId, BigDecimal.valueOf(0));
+
+        final String body = "{\"id\": \"" + transactionId + "\", "
+            + "\"from\": \"" + aWalletId + "\", "
+            + "\"to\": \"" + bWalletId + "\", "
+            + "\"amount\": \"5\"}";
+
+        given().body(body).post("/api/v1/transaction")
+            .then().statusCode(404);
+
+        BigDecimal bWalletBalance = getWalletBalance(bWalletId);
+
+        assertEquals(BigDecimal.valueOf(0), bWalletBalance);
+    }
+
+    @Test
+    public void should_return_404_on_unknown_to() {
+        UUID transactionId = UUID.randomUUID();
+        UUID aWalletId = UUID.randomUUID();
+        UUID bWalletId = UUID.randomUUID();
+
+        createWalletWithBalance(aWalletId, BigDecimal.valueOf(10));
+
+        final String body = "{\"id\": \"" + transactionId + "\", "
+            + "\"from\": \"" + aWalletId + "\", "
+            + "\"to\": \"" + bWalletId + "\", "
+            + "\"amount\": \"5\"}";
+
+        given().body(body).post("/api/v1/transaction")
+            .then().statusCode(404);
+
+        BigDecimal aWalletBalance = getWalletBalance(aWalletId);
+
+        assertEquals(BigDecimal.valueOf(10), aWalletBalance);
+    }
+
+    @Test
+    public void should_return_404_on_unknown_from_and_to() {
+        UUID transactionId = UUID.randomUUID();
+        UUID aWalletId = UUID.randomUUID();
+        UUID bWalletId = UUID.randomUUID();
+
+        final String body = "{\"id\": \"" + transactionId + "\", "
+            + "\"from\": \"" + aWalletId + "\", "
+            + "\"to\": \"" + bWalletId + "\", "
+            + "\"amount\": \"5\"}";
+
+        given().body(body).post("/api/v1/transaction")
+            .then().statusCode(404);
+    }
+
+    @Test
     public void should_return_400_on_same_transaction_id_different_amount() {
         UUID transactionId = UUID.randomUUID();
         UUID aWalletId = UUID.randomUUID();
@@ -190,6 +247,47 @@ public class WalletTransactionApiTest extends BaseApplicationTest {
         assertEquals(BigDecimal.valueOf(5), aWalletBalance);
         assertEquals(BigDecimal.valueOf(5), bWalletBalance);
         assertEquals(BigDecimal.valueOf(10), cWalletBalance);
+    }
+
+    @Test
+    public void should_return_400_on_same_transaction_id_all_different() {
+        UUID transactionId = UUID.randomUUID();
+
+        UUID aWalletId = UUID.randomUUID();
+        UUID bWalletId = UUID.randomUUID();
+        UUID cWalletId = UUID.randomUUID();
+        UUID dWalletId = UUID.randomUUID();
+
+        createWalletWithBalance(aWalletId, BigDecimal.valueOf(10));
+        createWalletWithBalance(bWalletId, BigDecimal.valueOf(0));
+        createWalletWithBalance(cWalletId, BigDecimal.valueOf(10));
+        createWalletWithBalance(dWalletId, BigDecimal.valueOf(0));
+
+        given()
+            .body("{\"id\": \"" + transactionId + "\", "
+                      + "\"from\": \"" + aWalletId + "\", "
+                      + "\"to\": \"" + bWalletId + "\", "
+                      + "\"amount\": \"5\"}")
+            .post("/api/v1/transaction")
+            .then().statusCode(200);
+
+        given()
+            .body("{\"id\": \"" + transactionId + "\", "
+                      + "\"from\": \"" + cWalletId + "\", "
+                      + "\"to\": \"" + dWalletId + "\", "
+                      + "\"amount\": \"5\"}")
+            .post("/api/v1/transaction")
+            .then().statusCode(400);
+
+        BigDecimal aWalletBalance = getWalletBalance(aWalletId);
+        BigDecimal bWalletBalance = getWalletBalance(bWalletId);
+        BigDecimal cWalletBalance = getWalletBalance(cWalletId);
+        BigDecimal dWalletBalance = getWalletBalance(dWalletId);
+
+        assertEquals(BigDecimal.valueOf(5), aWalletBalance);
+        assertEquals(BigDecimal.valueOf(5), bWalletBalance);
+        assertEquals(BigDecimal.valueOf(10), cWalletBalance);
+        assertEquals(BigDecimal.valueOf(0), dWalletBalance);
     }
 
     @Test
