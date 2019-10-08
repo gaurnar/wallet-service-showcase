@@ -101,6 +101,7 @@ No response on successful invocation.
 ## TODO
 
 - Transaction log
+- Configuration (threads, logging etc.)
 - Swagger
 - Support for currency
 - Proper persistence

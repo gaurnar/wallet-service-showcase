@@ -44,8 +44,6 @@ public class RestApiRouter implements HttpHandler {
 
             if (!pathMatcher.matches()) {
                 // should not happen, because we are selecting handler by matching
-                // if we don't call matches(), groups are not available for some reason
-                // TODO fix this
                 throw new RuntimeException("path does not match pattern");
             }
 
