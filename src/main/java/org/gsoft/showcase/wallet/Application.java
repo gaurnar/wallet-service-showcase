@@ -7,6 +7,10 @@ import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.gsoft.showcase.wallet.resource.HealthCheckResource;
 import org.gsoft.showcase.wallet.resource.TransactionResource;
 import org.gsoft.showcase.wallet.resource.WalletManagementResource;
@@ -21,6 +25,8 @@ public class Application {
     private final HttpServer httpServer;
 
     public Application(InetSocketAddress address) throws IOException {
+        initializeLogging();
+
         httpServer = HttpServer.create(address, 0);
 
         ObjectMapper objectMapper = buildObjectMapper();
@@ -65,5 +71,17 @@ public class Application {
 
     private ObjectMapper buildObjectMapper() {
         return new ObjectMapper();
+    }
+
+    private void initializeLogging() {
+        ConsoleAppender console = new ConsoleAppender();
+
+        String pattern = "%d %p [%c] %m%n";
+        console.setLayout(new PatternLayout(pattern));
+        console.setThreshold(Level.INFO); // TODO configure
+        console.activateOptions();
+
+        // TODO add file logging
+        Logger.getRootLogger().addAppender(console);
     }
 }

@@ -12,8 +12,12 @@ import org.gsoft.showcase.wallet.dto.ErrorVM;
 import org.gsoft.showcase.wallet.error.ExceptionWithHttpCode;
 import org.gsoft.showcase.wallet.error.InvalidJsonException;
 import org.gsoft.showcase.wallet.error.MethodNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RestApiRouter implements HttpHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(RestApiRouter.class);
 
     private final List<ApiRequestHandler> handlers;
     private final ObjectMapper objectMapper;
@@ -74,7 +78,9 @@ public class RestApiRouter implements HttpHandler {
     }
 
     private void handleException(Exception exception, HttpExchange exchange) throws IOException {
-        exception.printStackTrace(); // TODO add logging
+        log.error(
+            "error while handling request: " + exchange.getRequestMethod() + " " + exchange.getRequestURI().getPath(),
+            exception);
 
         int httpCode = 500;
         String message = "internal server error";
