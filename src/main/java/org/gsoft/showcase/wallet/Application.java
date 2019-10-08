@@ -6,7 +6,11 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Executors;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -40,9 +44,7 @@ public class Application {
 
         httpServer.createContext("/", router);
 
-        // TODO another executor
-        // TODO make configurable
-        httpServer.setExecutor(Executors.newFixedThreadPool(10));
+        configureRequestHandlingExecutor(httpServer);
     }
 
     public void start() {
@@ -83,5 +85,14 @@ public class Application {
 
         // TODO add file logging
         Logger.getRootLogger().addAppender(console);
+    }
+
+    private void configureRequestHandlingExecutor(HttpServer httpServer) {
+        // TODO make configurable
+        BlockingQueue<Runnable> executorQueue = new LinkedBlockingQueue<>(100);
+        Executor executor = new ThreadPoolExecutor(5, 50,
+                                                   1, TimeUnit.MINUTES,
+                                                   executorQueue);
+        httpServer.setExecutor(executor);
     }
 }
