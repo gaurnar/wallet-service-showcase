@@ -2,6 +2,7 @@ package org.gsoft.showcase.wallet.util.routing;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.gsoft.showcase.wallet.error.RequestBodyIsNotExpectedException;
 
 abstract class BaseApiRequestWithoutBodyHandler<T> implements ApiRequestHandler<Void, T> {
 
@@ -28,12 +29,11 @@ abstract class BaseApiRequestWithoutBodyHandler<T> implements ApiRequestHandler<
 
     @Override
     public Class<Void> getRequestType() {
-        throw new UnsupportedOperationException();
+        throw new RequestBodyIsNotExpectedException();
     }
 
     @Override
     public T handleWithBody(Matcher pathMatcher, Void body) {
-        // TODO log dismissed body
-        return handleWithoutBody(pathMatcher);
+        throw new RequestBodyIsNotExpectedException();
     }
 }
